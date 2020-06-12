@@ -1,6 +1,6 @@
 import './App.scss';
-import LanguageSwitcher from './components/languageswitcher';
 import Navbar from './components/navbar';
+import * as serviceWorker from './serviceWorker';
 import ScrollToTop from './utils/ScrollToTop';
 
 import React, {lazy, useState, Suspense} from 'react';
@@ -27,6 +27,12 @@ const State = lazy(() =>
 );
 const Essentials = lazy(() =>
   import('./components/essentials' /* webpackChunkName: "Essentials" */)
+);
+
+const LanguageSwitcher = lazy(() =>
+  import(
+    './components/languageswitcher' /* webpackChunkName: "LanguageSwitcher" */
+  )
 );
 
 const schemaMarkup = {
@@ -75,6 +81,10 @@ function App() {
     },
   ];
 
+  setTimeout(() => {
+    serviceWorker.register();
+  }, 50);
+
   return (
     <div className="App">
       <Helmet>
@@ -83,7 +93,11 @@ function App() {
         </script>
       </Helmet>
 
-      <LanguageSwitcher {...{showLanguageSwitcher, setShowLanguageSwitcher}} />
+      <Suspense fallback={<div />}>
+        <LanguageSwitcher
+          {...{showLanguageSwitcher, setShowLanguageSwitcher}}
+        />
+      </Suspense>
 
       <Suspense fallback={<div />}>
         <Router>
